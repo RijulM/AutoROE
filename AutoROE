@@ -39,6 +39,7 @@ iptables -A OUTPUT -m iprange --dst-range 192.168.0.0-192.168.255.255 -j ACCEPT
 iptables -A OUTPUT -j DROP
 read -p "Type anything to flush rules and restore Kali (not ctrl-c): " junkvar
 iptables --flush
-ip6tables --flush
+#IPv6 support to be added later
+#ip6tables --flush
 echo Done!
 
