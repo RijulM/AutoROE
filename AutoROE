@@ -3,6 +3,7 @@
 #"Help" page
 if [ "$1" == "-h" ]; then
   echo "psst...just run me"
+  echo "No shellcode--I promise"
   exit 0
 fi
 
