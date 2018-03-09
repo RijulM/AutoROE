@@ -16,6 +16,7 @@ echo ------------------------------------------------------
 echo "Save your insurance for the low-reliability exploits!"
 echo ------------------------------------------------------
 echo "I am meant for external assessments"
+iptables-save > /etc/network/iptables.rules
 echo "How many IP ranges?"
 read numrange
 echo "Note: Specify iptables ranges as 192.168.1.100-192.168.1.200"
@@ -40,6 +41,6 @@ iptables -A OUTPUT -j DROP
 read -p "Type anything to flush rules and restore Kali (not ctrl-c): " junkvar
 iptables --flush
 #IPv6 support to be added later
-#ip6tables --flush
+iptables-restore < /etc/network/iptables.rules
 echo Done!
 
