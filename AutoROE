@@ -8,7 +8,7 @@ if [ "$1" == "-h" ]; then
 fi
 
 
-#A simple script to sandbox for a pentest
+# A simple script to sandbox for a pentest
 
 echo ------------------------------------------------------
 echo -----------//AutoROE//-----------------------------
@@ -19,28 +19,30 @@ echo "I am meant for external assessments"
 iptables-save > /etc/network/iptables.rules
 echo "How many IP ranges?"
 read numrange
-echo "Note: Specify iptables ranges as 192.168.1.100-192.168.1.200"
+echo ------------------------------------------------------
+echo "Note: Specify ip range as 192.168.1.100-192.168.1.200"
+echo "You may also enter a single address"
+echo ------------------------------------------------------
 counter=1
-#While loop
-while [ $numrange -gt 0 ]; do
+let numrange=numrange+1
+# Allows for multiple ranges
+while [ $counter -lt $numrange ]; do
 	echo "What is your target IP range ("$counter")"
 	read range
 	iptables -A OUTPUT -m iprange --dst-range $range -j ACCEPT
-	let numrange=numrange-1
 	let counter=counter+1
 done
 
-#Private IP ranges unblock (to allow whatever routing you have)
+# Private IP ranges unblock (to allow whatever routing you have)
 iptables -A OUTPUT -m iprange --dst-range 10.0.0.0-10.255.255.255 -j ACCEPT
 iptables -A OUTPUT -m iprange --dst-range 172.16.0.0-172.32.255.255 -j ACCEPT
 iptables -A OUTPUT -m iprange --dst-range 192.168.0.0-192.168.255.255 -j ACCEPT
 
-
-#End while
+# Deny all outbound traffic outside ranges
 iptables -A OUTPUT -j DROP
+# Flush/Restore
 read -p "Type anything to flush rules and restore Kali (not ctrl-c): " junkvar
 iptables --flush
-#IPv6 support to be added later
 iptables-restore < /etc/network/iptables.rules
 echo Done!
 
