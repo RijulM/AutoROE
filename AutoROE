@@ -33,14 +33,27 @@ while [ $counter -lt $numrange ]; do
 	let counter=counter+1
 done
 
-# Private IP ranges unblock (to allow whatever routing you have)
-iptables -A OUTPUT -m iprange --dst-range 10.0.0.0-10.255.255.255 -j ACCEPT
-iptables -A OUTPUT -m iprange --dst-range 172.16.0.0-172.32.255.255 -j ACCEPT
-iptables -A OUTPUT -m iprange --dst-range 192.168.0.0-192.168.255.255 -j ACCEPT
-
+echo ------------------------------------------------------
+read -p "Autodetect IP [not for VPN connections](y/n) ?" autodetect
+echo ------------------------------------------------------
+if [[ "$autodetect" =~ ^([yY][eE][sS]|[yY])+$ ]]
+then 
+	#Potentially unsafe depending on networking
+	#Unblock x.x.x.0,1,255
+	ipaddr=$(hostname -I | awk -F'.' '{print $1,$2,$3}' OFS='.')
+	iptables -A OUTPUT -m iprange --dst-range $ipaddr".0" -j ACCEPT
+	iptables -A OUTPUT -m iprange --dst-range $ipaddr".1" -j ACCEPT
+	iptables -A OUTPUT -m iprange --dst-range $ipaddr".255" -j ACCEPT
+else
+	#Safe Version
+	iptables -A OUTPUT -m iprange --dst-range 10.0.0.0-10.255.255.255 -j ACCEPT
+	iptables -A OUTPUT -m iprange --dst-range 172.16.0.0-172.32.255.255 -j ACCEPT
+	iptables -A OUTPUT -m iprange --dst-range 192.168.0.0-192.168.255.255 -j ACCEPT
+fi
 # Deny all outbound traffic outside ranges
 iptables -A OUTPUT -j DROP
 # Flush/Restore
+echo ------------------------------------------------------
 read -p "Type anything to flush rules and restore Kali (not ctrl-c): " junkvar
 iptables --flush
 iptables-restore < /etc/network/iptables.rules

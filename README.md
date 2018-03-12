@@ -6,9 +6,10 @@ This tool whitelists ALL internal IP ranges, and so is useless in this stage of 
 
 I provide no guarantee it's in a fully functional state/will prevent launching accidental attacks. That said, just chmod +x and enjoy.
 
-
 Future goals:
 
 -IPv6 integration
 
 -Internal Testing functionality
+
+-Automation options, maybe crontab integration for duration of testing
